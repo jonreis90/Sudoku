@@ -106,16 +106,24 @@ public class NumberCell {
 			this.currentStatus = Status.MINI_NUMBERS;
 		}
 		else {
-			throw new IllegalAccessError("The box is not blank so mini numbers can't be displayed");
+			
 		}
 		
 	}
 	/**
-	 * Clears the main number out of the box 
+	 * Clears the main number out of the box,
+	 * Displays the mini numbers if any are set or blank if not
 	 */
 	public void clearMainNumber() {
-		mainNumberValue = 0;
-		this.currentStatus = Status.BLANK;
+		if(this.currentStatus == Status.MAIN_NUMBER) {
+				mainNumberValue = 0;
+				if(isAnyMiniNumbersSet()) {
+					this.currentStatus = Status.MINI_NUMBERS;
+				}
+				else {
+					this.currentStatus = Status.BLANK;
+				}
+		}
 	}
 	/**
 	 * Locks the box from being changed
@@ -184,6 +192,21 @@ public class NumberCell {
 		else {
 			this.miniNumbersDisplayed[number-1]= value;
 		}
+	}
+	/**
+	 * Checks if any mini numbers are currently set to true
+	 * @return -  Returns boolean result of check
+	 */
+	public boolean isAnyMiniNumbersSet(){
+		
+		boolean isAnyNumbersDisplayed=false;
+		for(boolean b: miniNumbersDisplayed) {
+			if(b) {
+				isAnyNumbersDisplayed=true;
+			}
+		}
+		return isAnyNumbersDisplayed;
+		
 	}
 	/**
 	 * Gets the boolean result for the mini number displayed field 

@@ -1,5 +1,8 @@
 package mainP;
 
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -18,15 +21,19 @@ public class Sudoku {
 	
 	//public properties
 	public boolean miniNumberMode=false;
-	public int boxSize = 50;
-	public int gridStartLocationOffset = 100;
+	public static final int CELL_SIZE = 50;
+	public static final int GRID_START_LOCATION_OFFSET = 100;
+	/**
+	 * The grid size of the sudoku
+	 * @implNote Default value =9 , Code currently does not support different grid sizes
+	 */
+	public static final int GRID_SIZE = 9;
 
 	//private properties
-	private int gridSize = 9;
-	private NumberCell[][] numberCell = new NumberCell[gridSize][gridSize];
+	private NumberCell[][] numberCell = new NumberCell[GRID_SIZE][GRID_SIZE];
 	private NumberCell selectedCell;
 	private enum Direction{UP,DOWN,LEFT,RIGHT};
-	
+	private static final int BOX_SIZE=CELL_SIZE*(GRID_SIZE/3);
 	
 
 	public Sudoku() {
@@ -41,14 +48,14 @@ public class Sudoku {
 		for (int y = 0; y < numberCell.length; y++) {
 			for (int x = 0; x < numberCell[y].length; x++) {
 
-				numberCell[x][y] = new NumberCell(new Rectangle(gridStartLocationOffset + x * boxSize,
-						gridStartLocationOffset + y * boxSize, boxSize, boxSize),new Point(x,y));
+				numberCell[x][y] = new NumberCell(new Rectangle(GRID_START_LOCATION_OFFSET + x * CELL_SIZE,
+						GRID_START_LOCATION_OFFSET + y * CELL_SIZE, CELL_SIZE, CELL_SIZE),new Point(x,y));
 
 			}
 		}
 		//test area
-		for(NumberCell n: getCellsInBox(getBoxPosition(getNumberCell(4,7)))) {
-			n.setMainNumber(2);
+		for(NumberCell n: getAllNumberCells()) {
+			n.displayMiniNumbers();
 			
 		}
 		
@@ -59,14 +66,20 @@ public class Sudoku {
 	
 	}
 	/**
+	 * toggles the mini number mode property
+	 */
+	public void toggleMiniNumberMode() {
+		this.miniNumberMode=!this.miniNumberMode;
+	}
+	/**
 	 * Gets the box position the number cell is contained in 
 	 * @param numberCell - the number cell to get the box position 
 	 * @return -  returns x,y point of the box position
 	 */
 	public Point getBoxPosition(NumberCell numberCell) {
 		
-		int xBox=Utility.roundUp(numberCell.getPosition().x+1, gridSize/3);
-		int yBox=Utility.roundUp(numberCell.getPosition().y+1, gridSize/3);
+		int xBox=Utility.roundUp(numberCell.getPosition().x+1, GRID_SIZE/3);
+		int yBox=Utility.roundUp(numberCell.getPosition().y+1, GRID_SIZE/3);
 		return new Point(xBox,yBox);
 	}
 	/**
@@ -76,7 +89,7 @@ public class Sudoku {
 	 */
 	public NumberCell[] getCellsInBox(Point boxPosition) {
 		
-		NumberCell[] cells=new NumberCell[gridSize];
+		NumberCell[] cells=new NumberCell[GRID_SIZE];
 		
 		int xBox=boxPosition.x*3;
 		int yBox=boxPosition.y*3;
@@ -105,9 +118,9 @@ public class Sudoku {
 	 */
 	public NumberCell[] getColumn(NumberCell numberCell) {
 		
-		NumberCell [] column = new NumberCell[gridSize];
+		NumberCell [] column = new NumberCell[GRID_SIZE];
 		
-		for(int i=0;i<gridSize;i++) {
+		for(int i=0;i<GRID_SIZE;i++) {
 			
 			column[i]= this.numberCell[numberCell.getPosition().x][i];
 			
@@ -122,9 +135,9 @@ public class Sudoku {
 	 */
 	public NumberCell[] getRow(NumberCell numberCell) {
 		
-		NumberCell [] row = new NumberCell[gridSize];
+		NumberCell [] row = new NumberCell[GRID_SIZE];
 		
-		for(int i=0;i<gridSize;i++) {
+		for(int i=0;i<GRID_SIZE;i++) {
 			
 			row[i]= this.numberCell[i][numberCell.getPosition().y];
 			
@@ -144,8 +157,8 @@ public class Sudoku {
 		return numberCell[x-1][y-1];
 	}
 	/**
-	 * Gets all number boxes in an array
-	 * @return -  returns a number box array containing all number box in properties 
+	 * Gets all number cells in an array
+	 * @return -  returns a number cell array containing all number cells in properties 
 	 */
 	private NumberCell[] getAllNumberCells() {
 		
@@ -208,13 +221,13 @@ public class Sudoku {
 		
 	}
 /**
- * TODO
- * @param direction
+ * Moves the selected cell in a direction
+ * @param direction - A direction up,down,left,right
  */
 	public void moveSelectedCell(Direction direction) {
 		switch(direction) {
 		case DOWN:
-			if(this.selectedCell.getPosition().y!=gridSize-1) {
+			if(this.selectedCell.getPosition().y!=GRID_SIZE-1) {
 				setSelectedCell(this.numberCell[this.selectedCell.getPosition().x][this.selectedCell.getPosition().y+1]);
 			}
 			break;
@@ -224,7 +237,7 @@ public class Sudoku {
 			}
 			break;
 		case RIGHT:
-			if(this.selectedCell.getPosition().x!=gridSize-1) {
+			if(this.selectedCell.getPosition().x!=GRID_SIZE-1) {
 				setSelectedCell(this.numberCell[this.selectedCell.getPosition().x+1][this.selectedCell.getPosition().y]);
 			}
 			break;
@@ -240,7 +253,7 @@ public class Sudoku {
 	}
 	
 	/**
-	 * TODO finish this
+	 * 
 	 * Handles all the keyboard activity for the sudoku
 	 * @param e - key event for this sudoku
 	 */
@@ -252,21 +265,28 @@ public class Sudoku {
 			return;
 		}
 
-	
+		//when number keys are pressed
 		if (i >= '1' && i <= '9') {
 				int number = Character.getNumericValue(i);
-			
-			 	if(selectedCell.getCurrentStatus()== Status.MINI_NUMBERS) {	
+				
+			 	if(selectedCell.getCurrentStatus()!= Status.LOCKED) {	
+			 		if(this.miniNumberMode&&selectedCell.getCurrentStatus()!=Status.MAIN_NUMBER) {
+			 			
 			 			selectedCell.setMiniNumber(number, !selectedCell.isMiniNumberSet(number));
-
-			 	}else if(selectedCell.getCurrentStatus()== Status.BLANK||selectedCell.getCurrentStatus()==Status.MAIN_NUMBER){
-			
-			 		selectedCell.setMainNumber(number);
-			 	}			
+			 			selectedCell.displayMiniNumbers();
+			 		}
+			 		else if(this.miniNumberMode&&selectedCell.getCurrentStatus()==Status.MAIN_NUMBER) {
+			 			
+			 		}
+			 		else{
+			 			selectedCell.setMainNumber(number);
+			 		}
+						
+			 	}
 		}
 	
 		
-
+		//when arrow keys are pressed, moves selection
 		switch (k) {
 		case KeyEvent.VK_DOWN:
 			moveSelectedCell(Direction.DOWN);
@@ -285,11 +305,13 @@ public class Sudoku {
 		case KeyEvent.VK_BACK_SPACE:
 		case KeyEvent.VK_DELETE:
 		case KeyEvent.VK_ESCAPE:
-			
+			selectedCell.clearMainNumber();
 			
 			break;
 		case KeyEvent.VK_SHIFT:
-			
+				toggleMiniNumberMode();
+				
+			break;
 			
 		}
 		
@@ -305,15 +327,44 @@ public class Sudoku {
 		for(NumberCell n:getAllNumberCells()) {
 			n.drawGraphics(g2);
 		}
+		
+		drawBoxes(g2);
+		
 		if(this.selectedCell !=null) {
 			this.selectedCell.drawGraphics(g2);
 		}
-				
-				//TODO draw the outside boarders and the 3x3 lines
-		 //draw a thicker grid around all boxes
-		//draw a thicker grid for each 3x3 lines
+		
+		
+		/**
+		 * TODO this here for testing, needs to be cleaned up eventually
+		 */
+		if(this.selectedCell!=null){
+			g2.setColor(Color.BLACK);
+			g2.setFont(new Font(null, Font.PLAIN, 20));
+			g2.drawString(this.selectedCell.getCurrentStatus().name(), 50, 50);
+			g2.drawString(String.valueOf(miniNumberMode),50,20);
+		}
 		
 	}
+	/**
+	 * draws the boxes in the sudoku
+	 * @param g2 - graphics to draw to 
+	 */
+	public void drawBoxes(Graphics2D g2) {
+		g2.setColor(Color.BLACK);
+		g2.setStroke(new BasicStroke(2));
+		
+		g2.draw(new Rectangle(GRID_START_LOCATION_OFFSET,GRID_START_LOCATION_OFFSET,GRID_SIZE*CELL_SIZE,GRID_SIZE*CELL_SIZE));
+		
+		for(int i=0;i<GRID_SIZE/3;i++) {
+			for(int j=0;j<GRID_SIZE/3;j++) {
+				g2.draw(new Rectangle(GRID_START_LOCATION_OFFSET+i*(BOX_SIZE),GRID_START_LOCATION_OFFSET+j*(BOX_SIZE),
+						BOX_SIZE,BOX_SIZE));
+			}
+		}
+		
+	}
+	
 
 	
 
