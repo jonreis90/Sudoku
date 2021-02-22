@@ -10,9 +10,6 @@ import java.util.Arrays;
 import mainP.NumberCell.Status;
 
 
-
-
-
 //is a 9x9 grid of numbers with rules
 
 public class Sudoku {
@@ -27,7 +24,10 @@ public class Sudoku {
 	//private properties
 	private int gridSize = 9;
 	private NumberCell[][] numberCell = new NumberCell[gridSize][gridSize];
-	private NumberCell selectedBox;
+	private NumberCell selectedCell;
+	private enum Direction{UP,DOWN,LEFT,RIGHT};
+	
+	
 
 	public Sudoku() {
 		createGrid();
@@ -46,7 +46,8 @@ public class Sudoku {
 
 			}
 		}
-		for(NumberCell n: getCellsInBox(new Point(1,3))) {
+		//test area
+		for(NumberCell n: getCellsInBox(getBoxPosition(getNumberCell(4,7)))) {
 			n.setMainNumber(2);
 			
 		}
@@ -57,9 +58,22 @@ public class Sudoku {
 		
 	
 	}
-	public void getBoxPosition(NumberCell numberCell) {
+	/**
+	 * Gets the box position the number cell is contained in 
+	 * @param numberCell - the number cell to get the box position 
+	 * @return -  returns x,y point of the box position
+	 */
+	public Point getBoxPosition(NumberCell numberCell) {
 		
+		int xBox=Utility.roundUp(numberCell.getPosition().x+1, gridSize/3);
+		int yBox=Utility.roundUp(numberCell.getPosition().y+1, gridSize/3);
+		return new Point(xBox,yBox);
 	}
+	/**
+	 * Gets the cells in a sudoku box given the box position
+	 * @param boxPosition - The x,y box position in a point
+	 * @return - Returns number cell array for all cells contained in box
+	 */
 	public NumberCell[] getCellsInBox(Point boxPosition) {
 		
 		NumberCell[] cells=new NumberCell[gridSize];
@@ -67,15 +81,17 @@ public class Sudoku {
 		int xBox=boxPosition.x*3;
 		int yBox=boxPosition.y*3;
 		
-		int[] xRange={xBox-2,xBox-1,xBox};
-		int[] yRange= {yBox-2,yBox-1,yBox};
+		int[] xRange={xBox-3,xBox-2,xBox-1};
+		int[] yRange= {yBox-3,yBox-2,yBox-1};
 		
 		int index=0;
+		
 		for(int i=0;i<3;i++) {
 			for(int j=0;j<3;j++) {
-				
+		
 				cells[index] = this.numberCell[xRange[i]][yRange[j]];
 				index++;
+				
 			}
 		}
 		
@@ -124,14 +140,14 @@ public class Sudoku {
 	 * @return - returns the number box
 	 * @exception - gives array out of bound if x or y is <1 or >then grid size
 	 */
-	public NumberCell getNumberBox(int x,int y) {
+	public NumberCell getNumberCell(int x,int y) {
 		return numberCell[x-1][y-1];
 	}
 	/**
 	 * Gets all number boxes in an array
 	 * @return -  returns a number box array containing all number box in properties 
 	 */
-	private NumberCell[] getAllNumberBoxes() {
+	private NumberCell[] getAllNumberCells() {
 		
 		NumberCell[] index= new NumberCell[0];
 		
@@ -146,38 +162,7 @@ public class Sudoku {
 		}
 		return index;
 	}
-	/**TODO Delete this after using it for ref
 	
-	//returns the int position x of the given rectangle
-	public int getIndexX(NumberRectangle x) {
-		
-		int numb=x.getRect().x;
-		numb= (numb-startOffset)/size;
-		return numb;
-		
-	}
-	//returns the int position y of the given rectangle
-	public int getIndexY(NumberRectangle y) {
-		
-		int numb=y.getRect().y;
-		numb= (numb-startOffset)/size;
-		return numb;
-		
-	}
-	//returns boolean if parameters row, col contains a rectangle
-	private boolean isNumberRecInBounds(int row,int col) {
-		
-		for (int y = 0; y < nRec.length; y++) {
-			for (int x = 0; x < nRec[y].length; x++) {
-				
-				if(x==row && y==col) {
-					return true;
-				}
-			}	
-		}
-		return false;
-	}
-	**/
 	
 	
 	/**
@@ -187,9 +172,9 @@ public class Sudoku {
 	 */
 	public void mousePressed(int x, int y) {
 		
-		for(NumberCell n : getAllNumberBoxes()) {
+		for(NumberCell n : getAllNumberCells()) {
 			if(n.getBox().contains(x, y)) {
-				setSelectedBox(n);
+				setSelectedCell(n);
 			}
 		}
 		
@@ -199,16 +184,16 @@ public class Sudoku {
 	 * Selects the number box passed in, the selected box can then be manipulated with key presses to play Sodoku
 	 * @param numberCell - The number box to be selected
 	 */
-	private void setSelectedBox(NumberCell numberCell) {
+	private void setSelectedCell(NumberCell numberCell) {
 		
-		if(this.selectedBox  == null) {
-			this.selectedBox = numberCell;
-			this.selectedBox.setSelected(true);
+		if(this.selectedCell  == null) {
+			this.selectedCell = numberCell;
+			this.selectedCell.setSelected(true);
 		}
 		else {
-			this.selectedBox.setSelected(false);
-			this.selectedBox = numberCell ;
-			this.selectedBox.setSelected(true);
+			this.selectedCell.setSelected(false);
+			this.selectedCell = numberCell ;
+			this.selectedCell.setSelected(true);
 		}
 		
 		setHighlightedBoxes();
@@ -222,10 +207,40 @@ public class Sudoku {
 		// TODO add the highlighting of boxes
 		
 	}
-
-	
+/**
+ * TODO
+ * @param direction
+ */
+	public void moveSelectedCell(Direction direction) {
+		switch(direction) {
+		case DOWN:
+			if(this.selectedCell.getPosition().y!=gridSize-1) {
+				setSelectedCell(this.numberCell[this.selectedCell.getPosition().x][this.selectedCell.getPosition().y+1]);
+			}
+			break;
+		case LEFT:
+			if(this.selectedCell.getPosition().x!=0) {
+				setSelectedCell(this.numberCell[this.selectedCell.getPosition().x-1][this.selectedCell.getPosition().y]);
+			}
+			break;
+		case RIGHT:
+			if(this.selectedCell.getPosition().x!=gridSize-1) {
+				setSelectedCell(this.numberCell[this.selectedCell.getPosition().x+1][this.selectedCell.getPosition().y]);
+			}
+			break;
+		case UP:
+			if(this.selectedCell.getPosition().y!=0) {
+				setSelectedCell(this.numberCell[this.selectedCell.getPosition().x][this.selectedCell.getPosition().y-1]);
+			}
+			break;
+		
+			
+		}
+			
+	}
 	
 	/**
+	 * TODO finish this
 	 * Handles all the keyboard activity for the sudoku
 	 * @param e - key event for this sudoku
 	 */
@@ -233,7 +248,7 @@ public class Sudoku {
 		char i = e.getKeyChar();
 		int k = e.getKeyCode();
 
-		if (selectedBox == null) {
+		if (selectedCell == null) {
 			return;
 		}
 
@@ -241,140 +256,45 @@ public class Sudoku {
 		if (i >= '1' && i <= '9') {
 				int number = Character.getNumericValue(i);
 			
-			 	if(selectedBox.getCurrentStatus()== Status.MINI_NUMBERS) {	
-			 			selectedBox.setMiniNumber(number, !selectedBox.isMiniNumberSet(number));
+			 	if(selectedCell.getCurrentStatus()== Status.MINI_NUMBERS) {	
+			 			selectedCell.setMiniNumber(number, !selectedCell.isMiniNumberSet(number));
 
-			 	}else if(selectedBox.getCurrentStatus()== Status.BLANK||selectedBox.getCurrentStatus()==Status.MAIN_NUMBER){
+			 	}else if(selectedCell.getCurrentStatus()== Status.BLANK||selectedCell.getCurrentStatus()==Status.MAIN_NUMBER){
 			
-			 		selectedBox.setMainNumber(number);
+			 		selectedCell.setMainNumber(number);
 			 	}			
 		}
-	}
+	
 		
-/**
- * TODO
- * implement the keyboard presses
- * need to get a row/col and check if movement is contained 
+
 		switch (k) {
 		case KeyEvent.VK_DOWN:
-
-			if (isNumberRecInBounds(getIndexX(selectedRec), getIndexY(selectedRec) + 1)) {
-				setSelectedRectangle(nRec[getIndexX(selectedRec)][getIndexY(selectedRec) + 1]);
-			}
+			moveSelectedCell(Direction.DOWN);
+			
 			break;
 		case KeyEvent.VK_UP:
-			if (isNumberRecInBounds(getIndexX(selectedRec), getIndexY(selectedRec) - 1)) {
-				setSelectedRectangle(nRec[getIndexX(selectedRec)][getIndexY(selectedRec) - 1]);
-			}
-
+			moveSelectedCell(Direction.UP);
 			break;
 		case KeyEvent.VK_LEFT:
-			if (isNumberRecInBounds(getIndexX(selectedRec) - 1, getIndexY(selectedRec))) {
-				setSelectedRectangle( nRec[getIndexX(selectedRec) - 1][getIndexY(selectedRec)]);
-			}
-
+			moveSelectedCell(Direction.LEFT);
 			break;
 		case KeyEvent.VK_RIGHT:
-
-			if (isNumberRecInBounds(getIndexX(selectedRec) + 1, getIndexY(selectedRec))) {
-				setSelectedRectangle(nRec[getIndexX(selectedRec) + 1][getIndexY(selectedRec)]);
-			}
+			moveSelectedCell(Direction.RIGHT);
 			break;
+			
 		case KeyEvent.VK_BACK_SPACE:
 		case KeyEvent.VK_DELETE:
 		case KeyEvent.VK_ESCAPE:
-			selectedRec.clearRect();
+			
+			
 			break;
 		case KeyEvent.VK_SHIFT:
-			miniNumberMode=!miniNumberMode;
+			
+			
 		}
 		
 
 	}
-	**/
-
-	
-	/** TODO delete this after using it for reference
-	private void setSelectedRectangle(NumberRectangle selected) {
-
-		// this sets the selected rectangle back to default colors when another is selected
-		if (!(selectedRec == null)) {
-			selectedRec.setColor(Color.BLACK);
-			for (NumberRectangle nr : getSelectedRow()) {
-				nr.setBgColor(Color.WHITE);
-			}
-			for (NumberRectangle nr : getSelectedCol()) {
-				nr.setBgColor(Color.WHITE);
-			}
-			for(NumberRectangle nr:getSelectedBox()) {
-				nr.setBgColor(Color.WHITE);
-			}
-
-		}
-
-		//changes selected colors
-		selectedRec = selected;
-		selectedRec.setColor(Color.BLUE);
-		
-		for(NumberRectangle nr:getSelectedBox()) {
-			nr.setBgColor(new Color(235,235,235));
-		}
-
-		for (NumberRectangle nr : getSelectedRow()) {
-			nr.setBgColor(new Color(220, 220, 220));
-		}
-		for (NumberRectangle nr : getSelectedCol()) {
-			nr.setBgColor(new Color(220, 220, 220));
-		}
-
-		
-		
-		
-	}
-
-
-
-	// TODO 
-	 * need to get a row of boxes 
-	 * need to get a col of boxes 
-	 * need to get the 3x3 areas of boxes
-	 * 
-	 * 
-//returns the row of selected rectangle
-private NumberRectangle[] getSelectedRow() {
-	NumberRectangle[] nRow= new NumberRectangle[nRec[selectedRec.getCol()].length];
-	
-	for(int x=0;x < nRec[selectedRec.getCol()].length;x++) {
-		nRow[x]= nRec[x][selectedRec.getCol()];
-	}
-	return nRow;
-}
-//returns the col of selected rectangle
-private NumberRectangle[] getSelectedCol() {
-
-	NumberRectangle[] nCol= new NumberRectangle[nRec.length];
-	
-	for(int x=0;x < nRec.length;x++) {
-		nCol[x]= nRec[selectedRec.getRow()][x];
-	}
-	return nCol;
-}
-//returns the box values of the selected rectangle
-private NumberRectangle[] getSelectedBox() {
-	NumberRectangle[] nBox= new NumberRectangle[9];
-	
-	int boxRow=(selectedRec.getRow()/3)*3;
-	int boxCol=(selectedRec.getCol()/3)*3;
-	int i=0;
-	for(int x=boxRow;x<boxRow+3;x++) {
-		for(int y=boxCol;y<boxCol+3;y++) {
-			nBox[i]=nRec[x][y];
-			i++;
-		}
-	}
-	return nBox;
-}
-	**/
 
 	/**
 	 * Draws the sodoku grid 
@@ -382,11 +302,11 @@ private NumberRectangle[] getSelectedBox() {
 	 */
 	public void drawGrid(Graphics2D g2) {
 		
-		for(NumberCell n:getAllNumberBoxes()) {
+		for(NumberCell n:getAllNumberCells()) {
 			n.drawGraphics(g2);
 		}
-		if(this.selectedBox !=null) {
-			this.selectedBox.drawGraphics(g2);
+		if(this.selectedCell !=null) {
+			this.selectedCell.drawGraphics(g2);
 		}
 				
 				//TODO draw the outside boarders and the 3x3 lines

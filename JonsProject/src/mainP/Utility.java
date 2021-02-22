@@ -43,6 +43,7 @@ public final class Utility {
 		
 		return (int) Math.ceil(number/divisor);
 	}
+	
 	/**
 	 * Adds an object to the end of an array of objects of the same class
 	 * 
