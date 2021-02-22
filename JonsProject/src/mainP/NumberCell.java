@@ -17,7 +17,7 @@ public class NumberCell {
 	public Color defaultColor=Color.BLACK;
 	public Color bgColor=Color.WHITE;
 	public Color selectedColor=Color.BLUE;
-	public Color highlightedColor=Color.PINK;
+	public Color highlightedColor=Color.LIGHT_GRAY;
 	public BasicStroke boxLines= new BasicStroke(1.0f);
 	private BasicStroke boxLinesThick= new BasicStroke(2.0f);
 	

@@ -32,6 +32,7 @@ public final class Utility {
 		// Draw the String
 		g.drawString(text, x, y);
 	}
+	
 	/**
 	 * Divides number by divisor and rounds up
 	 * Example 5/3 = 2

@@ -39,6 +39,13 @@ public class Sudoku {
 	public Sudoku() {
 		createGrid();
 		
+		
+	}
+	/**
+	 * Checks the rules of the game
+	 */
+	public void checkGameRules() {
+		
 	}
 
 	/**
@@ -58,13 +65,8 @@ public class Sudoku {
 			n.displayMiniNumbers();
 			
 		}
-		
-		
-		
-		
-		
-	
 	}
+	
 	/**
 	 * toggles the mini number mode property
 	 */
@@ -81,6 +83,14 @@ public class Sudoku {
 		int xBox=Utility.roundUp(numberCell.getPosition().x+1, GRID_SIZE/3);
 		int yBox=Utility.roundUp(numberCell.getPosition().y+1, GRID_SIZE/3);
 		return new Point(xBox,yBox);
+	}
+	/**
+	 * Gets the cells in a sudoku box given the cell position
+	 * @param numberCell - The number cell to get the box containing all cells
+	 * @return - Returns number cell array for all cells contained in box
+	 */
+	public NumberCell[] getCellsInBox(NumberCell numberCell) {
+		return getCellsInBox(getBoxPosition(numberCell));
 	}
 	/**
 	 * Gets the cells in a sudoku box given the box position
@@ -214,10 +224,21 @@ public class Sudoku {
 	}
 	/**
 	 * Sets the boxes to be highlighted based on the selected box
-	 * @throws - Null pointer if no box is selected
 	 */
 	private void setHighlightedBoxes() {
-		// TODO add the highlighting of boxes
+		for(NumberCell n:getAllNumberCells()) {
+			n.setHighlighted(false);
+		}
+		
+		for(NumberCell n:getRow(this.selectedCell)) {
+			n.setHighlighted(true);
+		}
+		for(NumberCell n:getColumn(this.selectedCell)) {
+			n.setHighlighted(true);
+		}
+		for(NumberCell n:getCellsInBox(this.selectedCell)) {
+			n.setHighlighted(true);
+		}
 		
 	}
 /**
@@ -323,6 +344,8 @@ public class Sudoku {
 	 * @param g2 - graphics to draw on the display
 	 */
 	public void drawGrid(Graphics2D g2) {
+		
+		g2.setBackground(Color.DARK_GRAY);
 		
 		for(NumberCell n:getAllNumberCells()) {
 			n.drawGraphics(g2);
