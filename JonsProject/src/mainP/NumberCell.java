@@ -4,13 +4,14 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.Rectangle;
 
 
 
 
 //A box that holds numbers and position to be used in sudoku
-public class NumberBox {
+public class NumberCell {
 
 	//Appearance properties
 	public Color defaultColor=Color.BLACK;
@@ -31,21 +32,32 @@ public class NumberBox {
 	private int mainNumberValue;
 	private Status currentStatus=Status.BLANK;
 	private boolean selected,highlighted;
+	private Point position;
 	
 
 	
 	
 	/**
 	 * Creates a box that can display number for use with a sudoku
-	 * @param box - the box to be created, width and height must be the same or Illegal argument exception occurs 
+	 * @param box - the box to be created
+	 * @exception -  width and height must be the same or Illegal argument exception occurs 
+	 * @param position - the x,y point position in the sudoku grid 
 	 */
-	public NumberBox(Rectangle box) {
+	public NumberCell(Rectangle box, Point position) {
 		if(box.height != box.width) { 
 			throw new IllegalArgumentException("Rectangle's width and height must be the same") ;
 		}
 		else {
 		this.box = box;
+		this.position=position;
 		}
+	}
+	/**
+	 * Gets the x,y position of the cell in the sudoku grid
+	 * @return - x,y point position
+	 */
+	public Point getPosition() {
+		return this.position;
 	}
 	/**
 	 * Inserts the number into the box

@@ -1,12 +1,13 @@
 package mainP;
 
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
 import java.util.Arrays;
 
 
-import mainP.NumberBox.Status;
+import mainP.NumberCell.Status;
 
 
 
@@ -25,79 +26,95 @@ public class Sudoku {
 
 	//private properties
 	private int gridSize = 9;
-	private NumberBox[][] numberBox = new NumberBox[gridSize][gridSize];
-	private NumberBox selectedBox;
+	private NumberCell[][] numberCell = new NumberCell[gridSize][gridSize];
+	private NumberCell selectedBox;
 
 	public Sudoku() {
 		createGrid();
 		
 	}
 
-	public void createGrid() {
-		for (int y = 0; y < numberBox.length; y++) {
-			for (int x = 0; x < numberBox[y].length; x++) {
-
-				numberBox[x][y] = new NumberBox(new Rectangle(gridStartLocationOffset + x * boxSize,
-						gridStartLocationOffset + y * boxSize, boxSize, boxSize));
-
-			}
-		}
-		for(NumberBox n: getAllNumberBoxes()) {
-			n.setMainNumber(2);
-			n.clearMainNumber();
-			n.setMiniNumber(2, true);
-			n.displayMiniNumbers();
-			//n.setMainNumber(2);
-			//n.lockMainNumber();
-		}
-		//testing
-		//getRow(getNumberBox(4,9));
-		NumberBox[] nb1=new NumberBox[1];
-		nb1[0]= new NumberBox(new Rectangle(100,100,100,100));
-		NumberBox nb2 = new NumberBox(new Rectangle(200,200,200,200));
-		
-		nb1=(NumberBox[])Utility.addToArray(nb1, nb2);
-		
-		
-		
-		
-
-	}
 	/**
-	 * TODO 
-	 * check make sure this is working
-	 *  finish utility class for adding to array 
-	 * 
-	 * Returns an entire row of number boxes from the grid 
-	 * @param numberBox - the number box to choose the row 
-	 * @return -  an array of number boxes in the row
+	 * Creates a sudoku grid based on classes properties
 	 */
-	public NumberBox[] getRow(NumberBox numberBox) {
-		NumberBox [] row = new NumberBox[this.gridSize];
-		
-		for(NumberBox[] n:this.numberBox) {
-			
-			int index=Arrays.asList(n).indexOf(numberBox);
-			System.out.println(index);
-			
-			if(index!=-1) {
-				for(NumberBox n2:this.numberBox[index]) {
-					NumberBox[] numberBoxArray= new NumberBox[row.length+1];
-					numberBoxArray = Arrays.copyOf(row, row.length +1);
-					numberBoxArray[row.length] = n2;
-					row = numberBoxArray;
-				}
+	public void createGrid() {
+		for (int y = 0; y < numberCell.length; y++) {
+			for (int x = 0; x < numberCell[y].length; x++) {
+
+				numberCell[x][y] = new NumberCell(new Rectangle(gridStartLocationOffset + x * boxSize,
+						gridStartLocationOffset + y * boxSize, boxSize, boxSize),new Point(x,y));
+
 			}
 		}
+		for(NumberCell n: getCellsInBox(new Point(1,3))) {
+			n.setMainNumber(2);
+			
+		}
+		
+		
+		
+		
 		
 	
+	}
+	public void getBoxPosition(NumberCell numberCell) {
+		
+	}
+	public NumberCell[] getCellsInBox(Point boxPosition) {
+		
+		NumberCell[] cells=new NumberCell[gridSize];
+		
+		int xBox=boxPosition.x*3;
+		int yBox=boxPosition.y*3;
+		
+		int[] xRange={xBox-2,xBox-1,xBox};
+		int[] yRange= {yBox-2,yBox-1,yBox};
+		
+		int index=0;
+		for(int i=0;i<3;i++) {
+			for(int j=0;j<3;j++) {
+				
+				cells[index] = this.numberCell[xRange[i]][yRange[j]];
+				index++;
+			}
+		}
+		
+		
+		return cells;
+	}
+	/**
+     * Gets an array of number cells in a given column
+	 * @param numberCell - the number cell to choose the row 
+	 * @return -  an array of number cells in the column
+	 */
+	public NumberCell[] getColumn(NumberCell numberCell) {
+		
+		NumberCell [] column = new NumberCell[gridSize];
 		
 		for(int i=0;i<gridSize;i++) {
 			
+			column[i]= this.numberCell[numberCell.getPosition().x][i];
+			
 		}
+
+		return column; 
+	}
+	/**
+     * Gets an array of number cells in a given row 
+	 * @param numberCell - the number cell to choose the row 
+	 * @return -  an array of number cells in a row
+	 */
+	public NumberCell[] getRow(NumberCell numberCell) {
 		
+		NumberCell [] row = new NumberCell[gridSize];
 		
-		return null; 
+		for(int i=0;i<gridSize;i++) {
+			
+			row[i]= this.numberCell[i][numberCell.getPosition().y];
+			
+		}
+
+		return row; 
 	}
 	
 	/**
@@ -107,21 +124,21 @@ public class Sudoku {
 	 * @return - returns the number box
 	 * @exception - gives array out of bound if x or y is <1 or >then grid size
 	 */
-	public NumberBox getNumberBox(int x,int y) {
-		return numberBox[x-1][y-1];
+	public NumberCell getNumberBox(int x,int y) {
+		return numberCell[x-1][y-1];
 	}
 	/**
 	 * Gets all number boxes in an array
 	 * @return -  returns a number box array containing all number box in properties 
 	 */
-	private NumberBox[] getAllNumberBoxes() {
+	private NumberCell[] getAllNumberBoxes() {
 		
-		NumberBox[] index= new NumberBox[0];
+		NumberCell[] index= new NumberCell[0];
 		
-		for(NumberBox[] n:numberBox) {
-			for(NumberBox n2:n) {
+		for(NumberCell[] n:numberCell) {
+			for(NumberCell n2:n) {
 				
-				NumberBox[] numberBoxArray= new NumberBox[index.length+1];
+				NumberCell[] numberBoxArray= new NumberCell[index.length+1];
 				numberBoxArray = Arrays.copyOf(index, index.length +1);
 				numberBoxArray[index.length] = n2;
 				index = numberBoxArray;
@@ -170,7 +187,7 @@ public class Sudoku {
 	 */
 	public void mousePressed(int x, int y) {
 		
-		for(NumberBox n : getAllNumberBoxes()) {
+		for(NumberCell n : getAllNumberBoxes()) {
 			if(n.getBox().contains(x, y)) {
 				setSelectedBox(n);
 			}
@@ -180,17 +197,17 @@ public class Sudoku {
 	}
 	/**
 	 * Selects the number box passed in, the selected box can then be manipulated with key presses to play Sodoku
-	 * @param numberBox - The number box to be selected
+	 * @param numberCell - The number box to be selected
 	 */
-	private void setSelectedBox(NumberBox numberBox) {
+	private void setSelectedBox(NumberCell numberCell) {
 		
 		if(this.selectedBox  == null) {
-			this.selectedBox = numberBox;
+			this.selectedBox = numberCell;
 			this.selectedBox.setSelected(true);
 		}
 		else {
 			this.selectedBox.setSelected(false);
-			this.selectedBox = numberBox ;
+			this.selectedBox = numberCell ;
 			this.selectedBox.setSelected(true);
 		}
 		
@@ -365,7 +382,7 @@ private NumberRectangle[] getSelectedBox() {
 	 */
 	public void drawGrid(Graphics2D g2) {
 		
-		for(NumberBox n:getAllNumberBoxes()) {
+		for(NumberCell n:getAllNumberBoxes()) {
 			n.drawGraphics(g2);
 		}
 		if(this.selectedBox !=null) {

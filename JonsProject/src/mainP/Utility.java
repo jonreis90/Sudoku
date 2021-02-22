@@ -33,10 +33,21 @@ public final class Utility {
 		g.drawString(text, x, y);
 	}
 	/**
+	 * Divides number by divisor and rounds up
+	 * Example 5/3 = 2
+	 * @param number - the number to divide
+	 * @param divisor - the divider
+	 * @return an integer of the rounded up number
+	 */
+	public static int roundUp(double number, double divisor) {
+		
+		return (int) Math.ceil(number/divisor);
+	}
+	/**
 	 * Adds an object to the end of an array of objects of the same class
 	 * 
-	 * @param arrayObject- an array of an object
-	 * @param objectAdding- the item to add to that array 
+	 * @param arrayObject - an array of an object
+	 * @param objectAdding - the item to add to that array 
 	 * @exception - Throws illegal argument exception if objects are not the same class 
 	 */
 	public static Object[] addToArray(Object[] arrayObject,Object objectAdding) {
