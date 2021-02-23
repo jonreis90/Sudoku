@@ -3,33 +3,58 @@ package mainP;
 public class SudokuAI {
 	
 	
-	/**
-	 * Scans the row, column and box for a duplicate number
-	 * @param row - number cell array that represent the row
-	 * @param column - number cell array that represent the column
-	 * @param box - number cell array that represent the box
-	 * @return - returns the first pair scanned
-	 */
-	public NumberCellPair scanForPair(NumberCell[] row,NumberCell[] column, NumberCell[] box) {
-		return null;
+	private Sudoku sudoku;
+	
+	public SudokuAI(Sudoku sudoku) {
+		this.sudoku = sudoku;
+		
+	}
+	public void checkRulesOfGame(NumberCell selectedCell) {
+		
+		//scanForPairInBox(selectedCell);
+		
+		
 	}
 	/**
-	 * Checks if a pair exist in the number cells given
-	 * @param numberCell - The number cell array to test
-	 * @return - returns the first pair of number cells found
+	 * scans the box for a pair
+	 * @param box - all the number
+	 * @return - returns first pair found or null if non are found
 	 */
-	public NumberCellPair checkIfPairExists(NumberCell[] numberCell) {
+	private void scanForPairInBox(NumberCell selectedCell) {
+		if(checkIfDuplicatesExists(sudoku.getCellsInBox(selectedCell))!=null) {
+			
+		
+		for(NumberCell n:checkIfDuplicatesExists(sudoku.getCellsInBox(selectedCell))){
+			n.setMainNumberToWrong();
+		}
+		}
+		
+	}
+	/**
+	 * Checks if a duplicates exist in the number cells given
+	 * @param numberCell - The number cell array to test
+	 * @return - returns all the numbers with duplicates
+	 */
+	private NumberCell[]checkIfDuplicatesExists(NumberCell[] numberCell) {
+		
+		NumberCell[] duplicateCells= new NumberCell[1];
 		
 		NumberCell[] copy= numberCell;
 		for(int i=0;i<numberCell.length;i++) {
 			for(int j=0;j<numberCell.length;j++) {
-				if(numberCell[i]==copy[j]&& i != j) {
-					return new NumberCellPair(numberCell[i],copy[j]);
+				
+				if(numberCell[i].getMainNumber()==copy[j].getMainNumber()&& i != j
+						&&numberCell[i].getMainNumber()!=0) {
+				
+					duplicateCells=(NumberCell[]) Utility.addToArray(duplicateCells, numberCell[i]);
+					 
+					
 				}
 			}
 		}
 		
-		return null;
+		return duplicateCells;
 	}
+	
 	
 }

@@ -34,20 +34,13 @@ public class Sudoku {
 	private NumberCell selectedCell;
 	private enum Direction{UP,DOWN,LEFT,RIGHT};
 	private static final int BOX_SIZE=CELL_SIZE*(GRID_SIZE/3);
-	
+	private final SudokuAI sudokuAI=new SudokuAI(this);
 
 	public Sudoku() {
 		createGrid();
 		
 		
 	}
-	/**
-	 * Checks the rules of the game
-	 */
-	public void checkGameRules() {
-		
-	}
-
 	/**
 	 * Creates a sudoku grid based on classes properties
 	 */
@@ -57,13 +50,7 @@ public class Sudoku {
 
 				numberCell[x][y] = new NumberCell(new Rectangle(GRID_START_LOCATION_OFFSET + x * CELL_SIZE,
 						GRID_START_LOCATION_OFFSET + y * CELL_SIZE, CELL_SIZE, CELL_SIZE),new Point(x,y));
-
 			}
-		}
-		//test area
-		for(NumberCell n: getAllNumberCells()) {
-			n.displayMiniNumbers();
-			
 		}
 	}
 	
@@ -301,6 +288,7 @@ public class Sudoku {
 			 		}
 			 		else{
 			 			selectedCell.setMainNumber(number);
+			 			this.sudokuAI.checkRulesOfGame(selectedCell);
 			 		}
 						
 			 	}
@@ -344,8 +332,6 @@ public class Sudoku {
 	 * @param g2 - graphics to draw on the display
 	 */
 	public void drawGrid(Graphics2D g2) {
-		
-		g2.setBackground(Color.DARK_GRAY);
 		
 		for(NumberCell n:getAllNumberCells()) {
 			n.drawGraphics(g2);

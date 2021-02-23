@@ -53,6 +53,13 @@ public class NumberCell {
 		}
 	}
 	/**
+	 * Sets the main number to display in red for errors in sudoku rules
+	 */
+	public void setMainNumberToWrong() {
+		currentStatus = Status.WRONG_MAIN_NUMBER;
+	}
+	
+	/**
 	 * Gets the x,y position of the cell in the sudoku grid
 	 * @return - x,y point position
 	 */
