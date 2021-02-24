@@ -18,7 +18,7 @@ import javax.swing.WindowConstants;
 @SuppressWarnings("serial")
 public class Frame extends JPanel implements MouseListener, KeyListener{
 	
-	public Sudoku sk=new Sudoku();
+	public Sudoku sk=new Sudoku(this);
 	
 	
 	

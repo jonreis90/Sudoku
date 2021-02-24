@@ -7,8 +7,7 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
-import java.util.Arrays;
-
+import java.util.concurrent.TimeUnit;
 
 import mainP.NumberCell.Status;
 
@@ -35,11 +34,19 @@ public class Sudoku {
 	private enum Direction{UP,DOWN,LEFT,RIGHT};
 	private static final int BOX_SIZE=CELL_SIZE*(GRID_SIZE/3);
 	private final SudokuAI sudokuAI=new SudokuAI(this);
-
-	public Sudoku() {
+	
+	public Frame frame;
+	
+	public Sudoku(){
 		createGrid();
 		
 		
+		
+		
+	}
+	public Sudoku(Frame frame) {
+		this.frame=frame;
+		createGrid();
 	}
 	/**
 	 * Creates a sudoku grid based on classes properties
@@ -52,6 +59,7 @@ public class Sudoku {
 						GRID_START_LOCATION_OFFSET + y * CELL_SIZE, CELL_SIZE, CELL_SIZE),new Point(x,y));
 			}
 		}
+		
 	}
 	
 	/**
@@ -157,20 +165,19 @@ public class Sudoku {
 	 * Gets all number cells in an array
 	 * @return -  returns a number cell array containing all number cells in properties 
 	 */
-	private NumberCell[] getAllNumberCells() {
+	public NumberCell[] getAllNumberCells() {
 		
-		NumberCell[] index= new NumberCell[0];
+		NumberCell[] numberCells= new NumberCell[GRID_SIZE*GRID_SIZE];
 		
-		for(NumberCell[] n:numberCell) {
-			for(NumberCell n2:n) {
+		int index=0;
+		for(int i=0;i<GRID_SIZE;i++) {
+			for(int j=0;j<GRID_SIZE;j++) {
 				
-				NumberCell[] numberBoxArray= new NumberCell[index.length+1];
-				numberBoxArray = Arrays.copyOf(index, index.length +1);
-				numberBoxArray[index.length] = n2;
-				index = numberBoxArray;
+				numberCells[index]=numberCell[i][j];
+				index++;
 			}
 		}
-		return index;
+		return numberCells;
 	}
 	
 	
@@ -259,12 +266,32 @@ public class Sudoku {
 		}
 			
 	}
-	
+	/**
+	 * Sets the main number of the selected cell 
+	 * If 0 clears the number
+	 * @param number - 0-9 integer numbers 
+	 */
+	public void setMainNumber(int number) {
+		if(number<0||number>9) {
+			throw new IllegalArgumentException("setMainNumber parameter must be 0-9");
+			
+		}
+		if(number==0) {
+			selectedCell.clearMainNumber();
+		}
+		else {
+			selectedCell.setMainNumber(number);
+		}
+		
+		this.sudokuAI.checkRulesOfGame(selectedCell);
+		
+	}
 	/**
 	 * 
 	 * Handles all the keyboard activity for the sudoku
 	 * @param e - key event for this sudoku
 	 */
+	
 	public void keyPressed(KeyEvent e) {
 		char i = e.getKeyChar();
 		int k = e.getKeyCode();
@@ -287,8 +314,7 @@ public class Sudoku {
 			 			
 			 		}
 			 		else{
-			 			selectedCell.setMainNumber(number);
-			 			this.sudokuAI.checkRulesOfGame(selectedCell);
+			 			setMainNumber(number);
 			 		}
 						
 			 	}
@@ -309,12 +335,13 @@ public class Sudoku {
 			break;
 		case KeyEvent.VK_RIGHT:
 			moveSelectedCell(Direction.RIGHT);
+			sudokuAI.generateBruteForceSudoku();
 			break;
 			
 		case KeyEvent.VK_BACK_SPACE:
 		case KeyEvent.VK_DELETE:
 		case KeyEvent.VK_ESCAPE:
-			selectedCell.clearMainNumber();
+			setMainNumber(0);
 			
 			break;
 		case KeyEvent.VK_SHIFT:

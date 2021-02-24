@@ -58,6 +58,14 @@ public class NumberCell {
 	public void setMainNumberToWrong() {
 		currentStatus = Status.WRONG_MAIN_NUMBER;
 	}
+	/**
+	 * Removes main number error 
+	 */
+	public void setMainNumberToRight() {
+		if(currentStatus == Status.WRONG_MAIN_NUMBER) {
+			currentStatus= Status.MAIN_NUMBER;
+		}
+	}
 	
 	/**
 	 * Gets the x,y position of the cell in the sudoku grid
@@ -122,7 +130,7 @@ public class NumberCell {
 	 * Displays the mini numbers if any are set or blank if not
 	 */
 	public void clearMainNumber() {
-		if(this.currentStatus == Status.MAIN_NUMBER) {
+		if(this.currentStatus == Status.MAIN_NUMBER||this.currentStatus == Status.WRONG_MAIN_NUMBER) {
 				mainNumberValue = 0;
 				if(isAnyMiniNumbersSet()) {
 					this.currentStatus = Status.MINI_NUMBERS;
