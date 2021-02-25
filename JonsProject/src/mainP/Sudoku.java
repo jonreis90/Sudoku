@@ -7,7 +7,7 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
-import java.util.concurrent.TimeUnit;
+
 
 import mainP.NumberCell.Status;
 
@@ -35,19 +35,13 @@ public class Sudoku {
 	private static final int BOX_SIZE=CELL_SIZE*(GRID_SIZE/3);
 	private final SudokuAI sudokuAI=new SudokuAI(this);
 	
-	public Frame frame;
 	
 	public Sudoku(){
 		createGrid();
 		
 		
-		
-		
 	}
-	public Sudoku(Frame frame) {
-		this.frame=frame;
-		createGrid();
-	}
+
 	/**
 	 * Creates a sudoku grid based on classes properties
 	 */
@@ -173,7 +167,7 @@ public class Sudoku {
 		for(int i=0;i<GRID_SIZE;i++) {
 			for(int j=0;j<GRID_SIZE;j++) {
 				
-				numberCells[index]=numberCell[i][j];
+				numberCells[index]=numberCell[j][i];
 				index++;
 			}
 		}
@@ -335,7 +329,6 @@ public class Sudoku {
 			break;
 		case KeyEvent.VK_RIGHT:
 			moveSelectedCell(Direction.RIGHT);
-			sudokuAI.generateBruteForceSudoku();
 			break;
 			
 		case KeyEvent.VK_BACK_SPACE:

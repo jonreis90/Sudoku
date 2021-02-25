@@ -9,7 +9,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.WindowConstants;
@@ -18,8 +17,7 @@ import javax.swing.WindowConstants;
 @SuppressWarnings("serial")
 public class Frame extends JPanel implements MouseListener, KeyListener{
 	
-	public Sudoku sk=new Sudoku(this);
-	
+	public Sudoku sk=new Sudoku();
 	
 	
 
@@ -37,6 +35,9 @@ public class Frame extends JPanel implements MouseListener, KeyListener{
 		this.addMouseListener(this);
 		jf.addKeyListener(this);
 		this.setBackground(Color.GRAY);
+		
+		
+		
 		
 		while (true) {
 			repaint();
@@ -121,7 +122,9 @@ public class Frame extends JPanel implements MouseListener, KeyListener{
 		// TODO Auto-generated method stub
 		
 	}
-	
+
+
+
 	
 	
 	

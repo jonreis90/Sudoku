@@ -1,24 +1,29 @@
 package mainP;
 
+
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.concurrent.TimeUnit;
+import java.util.HashMap;
 
 import mainP.NumberCell.Status;
 
 
-public class SudokuAI {
+public class SudokuAI implements Runnable{
 	
 	
 	private Sudoku sudoku;
+	Thread t;
 	
 	public SudokuAI(Sudoku sudoku) {
 		this.sudoku = sudoku;
 		
+		t=new Thread(this);
+		t.start();
 		
 	}
-	public void checkRulesOfGame(NumberCell selectedCell) {
 		
+	public void checkRulesOfGame(NumberCell selectedCell) {
+	
 		
 			if(isSelectedCellWrong(selectedCell)) {
 				selectedCell.setMainNumberToWrong();
@@ -29,39 +34,76 @@ public class SudokuAI {
 	}
 	public void generateBruteForceSudoku() {
 		
+		
+		
 		//loops through numbers
 		//set number to random 
 		//if error, cycle through all numbers 
 		//if number equals original
-		//go back in loop and cycle through numbers 
+		
+		//start backtracking 
+		//when backtracking -1 number, holds the number that was used in an array
+		//loops through all the possible numbers left
+		//if a number is found that lets the number continue past number 0 then backtracking stops
+		//if a number is not found set backtracking -2 and continue process
 		NumberCell[] allCells=sudoku.getAllNumberCells();
 		
+		boolean isBackTracking=false;
+		int backTrackingNumber=0;
+		
+		
 		for(int i=0;i<allCells.length;i++) {
-			try {
-				Thread.sleep(20);
-			} catch (InterruptedException e) {
-				System.out.println("test");
-				e.printStackTrace();
-			}
+			
+			
+			
 			int rand=(int)(Math.random()*9+1);
 			int original=rand;
 			
+			
 			allCells[i].setMainNumber(rand);
 			
-			while(!isSelectedCellWrong(allCells[i])) {
+			if(i>backTrackingNumber) {
+				isBackTracking=false;
+				
+			}
+			
+			while(isSelectedCellWrong(allCells[i])) {
+				
+				try {
+					t.sleep(100);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				
 				rand++;
+				
+				
 				
 				if(rand>9) {
 					rand=1;
 				}
 				
+				allCells[i].setMainNumber(rand);
+				
 				if(rand==original) {
-					allCells[i].setMainNumberToWrong();
+					//start backtracking 
+					if(isBackTracking) {
+						i=i-2;
+						//add list of used numbers
+					}
+					else {
+						backTrackingNumber=i;
+						i=i-2;
+						isBackTracking=true;
+					}
+					
+					
 					break;
 				}
 				
 			}
+			
 		}
 	}
 	/**
@@ -153,8 +195,15 @@ public class SudokuAI {
 		return result;
 		
 	}
-	
+
+	@Override
+	public void run() {
+		System.out.println("running");
+		generateBruteForceSudoku();
+		
+	}
+
 
 	
-	
 }
+
