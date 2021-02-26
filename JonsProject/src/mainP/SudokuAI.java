@@ -46,27 +46,29 @@ public class SudokuAI implements Runnable{
 		//loops through all the possible numbers left
 		//if a number is found that lets the number continue past number 0 then backtracking stops
 		//if a number is not found set backtracking -2 and continue process
+		
 		NumberCell[] allCells=sudoku.getAllNumberCells();
+		ArrayList<Integer> UsedNumbers=new ArrayList<Integer>();
 		
 		boolean isBackTracking=false;
 		int backTrackingNumber=0;
 		
 		
+		
+		//if more cells do
 		for(int i=0;i<allCells.length;i++) {
 			
 			
-			
+			//gets random number
 			int rand=(int)(Math.random()*9+1);
 			int original=rand;
 			
-			
+		 
+			//sets number
 			allCells[i].setMainNumber(rand);
 			
-			if(i>backTrackingNumber) {
-				isBackTracking=false;
-				
-			}
 			
+			//while number is not right 
 			while(isSelectedCellWrong(allCells[i])) {
 				
 				try {
@@ -76,19 +78,21 @@ public class SudokuAI implements Runnable{
 					e.printStackTrace();
 				}
 				
+				
 				rand++;
-				
-				
-				
 				if(rand>9) {
 					rand=1;
 				}
 				
 				allCells[i].setMainNumber(rand);
 				
+				
 				if(rand==original) {
 					//start backtracking 
+					
+					
 					if(isBackTracking) {
+						
 						i=i-2;
 						//add list of used numbers
 					}
@@ -105,6 +109,25 @@ public class SudokuAI implements Runnable{
 			}
 			
 		}
+	}
+
+	public void generateSudoku() {
+		
+		NumberCell[] allCells=sudoku.getAllNumberCells();
+		ArrayList<Integer> UsedNumbers=new ArrayList<Integer>();
+		
+		boolean isBackTracking=false;
+		int backTrackingNumber=0;
+		
+		for(int i=0;i<allCells.length;i++) {
+			
+			//add random number
+			//if(is number right){
+			    
+		
+			
+		}
+		
 	}
 	/**
 	 * Gets the all the wrong cells connected to selected cell by box,row,column 

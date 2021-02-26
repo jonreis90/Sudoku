@@ -33,11 +33,14 @@ public class Sudoku {
 	private NumberCell selectedCell;
 	private enum Direction{UP,DOWN,LEFT,RIGHT};
 	private static final int BOX_SIZE=CELL_SIZE*(GRID_SIZE/3);
-	private final SudokuAI sudokuAI=new SudokuAI(this);
+	
+	private final SudokuAI sudokuAI;
 	
 	
 	public Sudoku(){
 		createGrid();
+		//must create grid first or null exceptions will happen due to multiple treads 
+		sudokuAI=new SudokuAI(this);
 		
 		
 	}
