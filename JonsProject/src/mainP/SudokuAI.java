@@ -3,7 +3,7 @@ package mainP;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
+
 
 import mainP.NumberCell.Status;
 
@@ -11,14 +11,19 @@ import mainP.NumberCell.Status;
 public class SudokuAI implements Runnable{
 	
 	
-	private Sudoku sudoku;
-	Thread t;
+	public Sudoku sudoku;
+	
+	private Thread t;
+	private SudokuGenerator sudokuGenerator;
+	
 	
 	public SudokuAI(Sudoku sudoku) {
 		this.sudoku = sudoku;
-		
+		this.sudokuGenerator= new SudokuGenerator(this);
 		t=new Thread(this);
 		t.start();
+		
+		
 		
 	}
 		
@@ -35,100 +40,17 @@ public class SudokuAI implements Runnable{
 	public void generateBruteForceSudoku() {
 		
 		
+		sudokuGenerator.run();
 		
-		//loops through numbers
-		//set number to random 
-		//if error, cycle through all numbers 
-		//if number equals original
-		
-		//start backtracking 
-		//when backtracking -1 number, holds the number that was used in an array
-		//loops through all the possible numbers left
-		//if a number is found that lets the number continue past number 0 then backtracking stops
-		//if a number is not found set backtracking -2 and continue process
-		
-		NumberCell[] allCells=sudoku.getAllNumberCells();
-		ArrayList<Integer> UsedNumbers=new ArrayList<Integer>();
-		
-		boolean isBackTracking=false;
-		int backTrackingNumber=0;
-		
-		
-		
-		//if more cells do
-		for(int i=0;i<allCells.length;i++) {
+				
+				
 			
-			
-			//gets random number
-			int rand=(int)(Math.random()*9+1);
-			int original=rand;
-			
-		 
-			//sets number
-			allCells[i].setMainNumber(rand);
-			
-			
-			//while number is not right 
-			while(isSelectedCellWrong(allCells[i])) {
-				
-				try {
-					t.sleep(100);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				
-				
-				rand++;
-				if(rand>9) {
-					rand=1;
-				}
-				
-				allCells[i].setMainNumber(rand);
-				
-				
-				if(rand==original) {
-					//start backtracking 
-					
-					
-					if(isBackTracking) {
-						
-						i=i-2;
-						//add list of used numbers
-					}
-					else {
-						backTrackingNumber=i;
-						i=i-2;
-						isBackTracking=true;
-					}
-					
-					
-					break;
-				}
-				
-			}
-			
-		}
+		
 	}
 
-	public void generateSudoku() {
-		
-		NumberCell[] allCells=sudoku.getAllNumberCells();
-		ArrayList<Integer> UsedNumbers=new ArrayList<Integer>();
-		
-		boolean isBackTracking=false;
-		int backTrackingNumber=0;
-		
-		for(int i=0;i<allCells.length;i++) {
-			
-			//add random number
-			//if(is number right){
-			    
-		
-			
-		}
-		
-	}
+
+
+	
 	/**
 	 * Gets the all the wrong cells connected to selected cell by box,row,column 
 	 * and removes the error if applicable 
@@ -170,7 +92,7 @@ public class SudokuAI implements Runnable{
 	 * Scans the selected cells box,row and column for duplicates and returns boolean result
 	 * @param selectedCell - The cell to scan
 	 */
-	private boolean isSelectedCellWrong(NumberCell selectedCell) {
+	public boolean isSelectedCellWrong(NumberCell selectedCell) {
 		if(selectedCell.getMainNumber()!=0 && scanForDuplicateInBox(selectedCell).size()>1 ||
 		   selectedCell.getMainNumber()!=0 && scanForDuplicateInRow(selectedCell).size()>1 ||
 		   selectedCell.getMainNumber()!=0 && scanForDuplicateInColumn(selectedCell).size()>1) {
