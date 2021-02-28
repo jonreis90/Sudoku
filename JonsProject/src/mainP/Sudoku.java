@@ -7,13 +7,17 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
-
+import java.util.ArrayList;
 
 import mainP.NumberCell.Status;
 
 
-//is a 9x9 grid of numbers with rules
 
+/**
+ * Creates a sudoku for players to interact and solve 
+ * @author jonre
+ *
+ */
 public class Sudoku {
 	
 	
@@ -40,7 +44,7 @@ public class Sudoku {
 	public Sudoku(){
 		createGrid();
 		//must create grid first or null exceptions will happen due to multiple treads 
-		sudokuAI=new SudokuAI(this);
+		sudokuAI=new SudokuAI(this,false);
 		
 		
 	}

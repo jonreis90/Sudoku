@@ -7,12 +7,20 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 
-
+/**
+ * A file IO for the creating and reading of sudoku data 
+ * @author jonre
+ *
+ */
 public class SudokuFileIO {
 	String fileName;
 	BufferedWriter writer;
 	BufferedReader reader;
 	
+	/**
+	 * Creates a new file and initialises the IO read/write buffers
+	 * @param fileName - the name of the file to create
+	 */
 	SudokuFileIO(String fileName) {
 			try {
 				writer=new BufferedWriter(new FileWriter(fileName,true));
@@ -26,7 +34,10 @@ public class SudokuFileIO {
 			
 		
 	}
-	
+	/**
+	 * Adds a new line of data to the sudoku file 
+	 * @param string - the string of data 
+	 */
 	public void addNewSudoku(String string) {
 		try {
 			writer.write(string+" \n");
@@ -38,6 +49,10 @@ public class SudokuFileIO {
 		
 		
 	}
+	/**
+	 * Gets a random line of sudoku data from file
+	 * @return - returns the line of data converted to an integer array
+	 */
 	public ArrayList<Integer> getRandomSudoku(){
 		
 		ArrayList<String> list = new ArrayList<String>();

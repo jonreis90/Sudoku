@@ -2,6 +2,10 @@ package mainP;
 
 import java.util.ArrayList;
 
+/**
+ * A class to create backtrack generators from
+ * @author jonreis
+ */
 public abstract class BackTrackGenerator implements BackTracking {
 	
 	
@@ -16,7 +20,11 @@ public abstract class BackTrackGenerator implements BackTracking {
 	private ArrayList<Integer> usedSolution= new ArrayList<Integer>();
 
 	
-	
+	/**
+	 * creates a new back track generator
+	 * @param problemSize - int of all the problems
+	 * @param choices - the number of different solutions to the problems
+	 */
 	BackTrackGenerator(int problemSize,int[] choices){
 		this.problemSize=problemSize;
 		for(int i:choices) {
@@ -25,7 +33,7 @@ public abstract class BackTrackGenerator implements BackTracking {
 	} 
 	/**
 	 * starts running the generator, will randomly pick a choice and cycle through and
-	 * compare against constraints till the generation is complete
+	 * compare against constraints till the generation is complete and calls done() method
 	 */
 	public void run() {
 		for(problemIndex=0;problemIndex<problemSize;problemIndex++) {
@@ -64,7 +72,7 @@ public abstract class BackTrackGenerator implements BackTracking {
 			
 			
 			if(usedSolution.containsAll(choices)) {
-				allChoicesUsed(choice);
+				allChoicesUsed();
 			}
 			else {
 				choice++;
@@ -82,9 +90,8 @@ public abstract class BackTrackGenerator implements BackTracking {
 	/**
 	 * When all choices are used for a single problem, backtracks and cycles through different possibilities
 	 * till the constraints are solved
-	 * @param choiceUsed
 	 */
-	private void allChoicesUsed(int choiceUsed) {
+	private void allChoicesUsed() {
 		if(isBackTracking) {
 		
 			backTrackLevels++;

@@ -7,7 +7,11 @@ import java.util.Arrays;
 
 import mainP.NumberCell.Status;
 
-
+/**
+ * SudokuAI is used for checking/solving the rules of the game and updating accordingly  
+ * @author jonre
+ *
+ */
 public class SudokuAI implements Runnable{
 	
 	
@@ -17,16 +21,22 @@ public class SudokuAI implements Runnable{
 	private SudokuGenerator sudokuGenerator;
 	
 	
-	public SudokuAI(Sudoku sudoku) {
+	public SudokuAI(Sudoku sudoku, boolean runGenerator) {
 		this.sudoku = sudoku;
-		this.sudokuGenerator= new SudokuGenerator(this);
-		t=new Thread(this);
-		t.start();
+		
+		if(runGenerator) {
+			this.sudokuGenerator= new SudokuGenerator(this);
+			t=new Thread(this);
+			t.start();
+		}
 		
 		
 		
 	}
-		
+	/**
+	 * checks the rules of the game with given cell, updates the cell and other cells 
+	 * @param selectedCell - cell to check the errors
+	 */
 	public void checkRulesOfGame(NumberCell selectedCell) {
 	
 		
@@ -37,20 +47,18 @@ public class SudokuAI implements Runnable{
 		
 		
 	}
-	public void generateBruteForceSudoku() {
+	/**
+	 * Runs the sudoku generator, filling the grid with cells with the rules as constraints
+	 * Outputs resulting generator to sudoku solutions file and repeats indefinitely 
+	 */
+	public void generateSudoku() {
 		
 		
 		sudokuGenerator.run();
-		
-				
-				
-			
-		
+					
 	}
 
 
-
-	
 	/**
 	 * Gets the all the wrong cells connected to selected cell by box,row,column 
 	 * and removes the error if applicable 
@@ -141,10 +149,13 @@ public class SudokuAI implements Runnable{
 		
 	}
 
+	/**
+	 * start the run thread for generating the sudoku if needed
+	 */
 	@Override
 	public void run() {
 		System.out.println("running");
-		generateBruteForceSudoku();
+		generateSudoku();
 		
 	}
 

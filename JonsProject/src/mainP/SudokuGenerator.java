@@ -1,12 +1,21 @@
 package mainP;
 
+/**
+ * A sudoku generator
+ * @author jonreis
+ *
+ */
 public class SudokuGenerator extends BackTrackGenerator{
 
-	SudokuAI sudokuAI;
+	private SudokuAI sudokuAI;
+	private NumberCell[] allCells;
 	private static final int PROBLEM_SIZE=81;
 	private static final int[] CHOICES= {1,2,3,4,5,6,7,8,9};
+	/**
+	 * use this to animate the generator 
+	 */
 	private static final int SLEEP_TIME=0;
-	NumberCell[] allCells;
+	
 	
 	
 	
