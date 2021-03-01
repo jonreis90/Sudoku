@@ -34,7 +34,7 @@ public class SudokuSolver implements Runnable{
 	}
 	public void techniqueLastNumber() {
 		for(NumberCell n:sudoku.getAllNumberCells()) {
-			
+			//TODO 
 		}
 	}
 	@Override

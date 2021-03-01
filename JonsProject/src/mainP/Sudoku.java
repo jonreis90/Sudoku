@@ -22,17 +22,17 @@ public class Sudoku {
 	
 	
 	
-	//public properties
+	
 	public boolean miniNumberMode=false;
 	public static final int CELL_SIZE = 50;
 	public static final int GRID_START_LOCATION_OFFSET = 100;
+	
 	/**
 	 * The grid size of the sudoku
 	 * @implNote Default value =9 , Code currently does not support different grid sizes
 	 */
-	public static final int GRID_SIZE = 9;
+	private static final int GRID_SIZE = 9;
 
-	//private properties
 	private NumberCell[][] numberCell = new NumberCell[GRID_SIZE][GRID_SIZE];
 	private NumberCell selectedCell;
 	private enum Direction{UP,DOWN,LEFT,RIGHT};
@@ -62,6 +62,8 @@ public class Sudoku {
 		}
 		
 	}
+	
+	
 	
 	/**
 	 * toggles the mini number mode property
@@ -113,26 +115,35 @@ public class Sudoku {
 				
 			}
 		}
-		
-		
 		return cells;
 	}
 	/**
      * Gets an array of number cells in a given column
-	 * @param numberCell - the number cell to choose the row 
+	 * @param location - the integer location to choose the column
 	 * @return -  an array of number cells in the column
 	 */
-	public NumberCell[] getColumn(NumberCell numberCell) {
+	public NumberCell[] getColumn(int location) {
 		
 		NumberCell [] column = new NumberCell[GRID_SIZE];
 		
 		for(int i=0;i<GRID_SIZE;i++) {
 			
-			column[i]= this.numberCell[numberCell.getPosition().x][i];
+			column[i]= this.numberCell[location][i];
 			
 		}
 
 		return column; 
+		
+	}
+	
+	/**
+     * Gets an array of number cells in a given column
+	 * @param numberCell - the number cell to choose the column
+	 * @return -  an array of number cells in the column
+	 */
+	public NumberCell[] getColumn(NumberCell numberCell) {
+		return getColumn(numberCell.getPosition().x);
+		
 	}
 	/**
      * Gets an array of number cells in a given row 
